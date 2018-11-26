@@ -1,3 +1,5 @@
+# Client for Arduino based MAX31856 Six Channel Temp Reader
+
 import serial
 import time
 import csv
