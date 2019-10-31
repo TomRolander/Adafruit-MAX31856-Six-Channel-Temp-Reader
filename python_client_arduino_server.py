@@ -12,7 +12,7 @@ times = []
 #arduino = serial.Serial('/dev/cu.usbmodem1441',115200) #connecting to serial port - top usbC connection on right side of comp
 
 #Windows Computer
-arduino = serial.Serial('COM3', 9600)
+arduino = serial.Serial('COM9', 9600)
 time.sleep(2)
 
 filename = input('What would you like to name this file (file path) ')
