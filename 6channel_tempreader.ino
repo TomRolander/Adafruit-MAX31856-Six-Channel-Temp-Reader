@@ -1,6 +1,6 @@
 #include <Adafruit_MAX31856.h>
 
-#define VERSION "Ver 1.0 Six Channel Temp Reader"
+#define VERSION "Ver 1.1 Six Channel Temp Reader"
 
 // Use software SPI: CS, DI, DO, CLK
 Adafruit_MAX31856 max[6] = {
@@ -19,13 +19,13 @@ void setup() {
   Serial.begin(9600);
   Serial.println("MAX31856 thermocouple test");
   Serial.println("Thermocouple type: ");
-  
-  for (int i=0; i<6; i++) {
+
+  for (int i = 0; i < 6; i++) {
     max[i].begin();
     max[i].setThermocoupleType(MAX31856_TCTYPE_K);
 
-    Serial.print(i+1);
-    switch ( max[i].getThermocoupleType() ){
+    Serial.print(i + 1);
+    switch ( max[i].getThermocoupleType() ) {
       case MAX31856_TCTYPE_B: Serial.println("B Type"); break;
       case MAX31856_TCTYPE_E: Serial.println("E Type"); break;
       case MAX31856_TCTYPE_J: Serial.println("J Type"); break;
@@ -38,33 +38,36 @@ void setup() {
       case MAX31856_VMODE_G32: Serial.println("Voltage x8 Gain mode"); break;
       default: Serial.println("Unknown"); break;
     }
-    max[i].setTempFaultThreshholds(0.0, 200.0);    
+    max[i].setTempFaultThreshholds(0.0, 200.0);
   }
 }
 
 
-void loop() {
-//  Serial.print("Cold Junction Temp: "); Serial.println(max.readCJTemperature());
+void loop() 
+{
+//  Serial.print("Cold Junction Temp: "); Serial.println(max[0].readCJTemperature());
 
   String data;
   while (Serial.available() == 0);
   data = Serial.readString();
   data.toUpperCase();
 
-  if (data[0] == 'V') {
+  if (data[0] == 'V') 
+  {
     Serial.println(VERSION);
     return;
   }
-  if (data[0] != "T")
+
+  if (data[0] != 'T')
     return;
 
   if ((data[1] >= '1' && data[1] <= '6') || data[1] == '*') {
-    for (int i=0; i<6; i++) {
+    for (int i = 0; i < 6; i++) {
       char buf[120];
       float temp;
-      if (data[1] == '*' || data[1] == i+'1') {
+
+      if (data[1] == '*' || data[1] == i + '1') {
         temp = max[i].readThermocoupleTemperature();
-        
         // Check and print any faults
         uint8_t fault = max[i].readFault();
         if (fault) {
@@ -76,11 +79,15 @@ void loop() {
           if (fault & MAX31856_FAULT_TCLOW)   Serial.println("Thermocouple Low Fault");
           if (fault & MAX31856_FAULT_OVUV)    Serial.println("Over/Under Voltage Fault");
           if (fault & MAX31856_FAULT_OPEN)    Serial.println("Thermocouple Open Fault");
-        }  
-       
-        sprintf("T%d %f", i+1, temp);
-        Serial.println(buf);
+        }
+
+        //sprintf("T%d %f", i + 1, temp);
+        //Serial.println(buf);
+        Serial.print("T");
+        Serial.print(i+1);
+        Serial.print(" ");
+        Serial.println(temp);       
       }
     }
-  }  
+  }
 }
